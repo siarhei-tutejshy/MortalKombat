@@ -148,6 +148,10 @@ body {
     width: 90%;
 }
 
+.player1 .life {
+    text-align: right;
+}
+
 .name {
     position: absolute;
     font-family: 'Mortal Kombat 3';
