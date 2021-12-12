@@ -39,7 +39,7 @@ function randomizer(min, max) {
 
 function changeHP(player) {
     const $playerLife = document.querySelector(`.player${player.player} .life`);
-    let damage = randomizer(1, 20);
+    const damage = randomizer(1, 20);
 
     player.hp -= damage;
 
@@ -61,9 +61,9 @@ $randomButton.addEventListener('click', () => {
     changeHP(player1);
     changeHP(player2);
 
-    if (player1.hp == 0) {
+    if (player1.hp === 0) {
         $arena.append(winPlayer(player2.name));
-    } else if (player2.hp == 0) {
+    } else if (player2.hp === 0) {
         $arena.append(winPlayer(player1.name));
     }
 });
