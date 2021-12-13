@@ -11,6 +11,9 @@ const player1 = {
     attack: function () {
         console.log(`${this.name} Fight...`);
     },
+    changeHP: changeHP,
+    elHP: elHP,
+    renderHP: renderHP,
 };
 
 const player2 = {
@@ -23,6 +26,9 @@ const player2 = {
     attack: function () {
         console.log(`${this.name} Fight...`);
     },
+    changeHP: changeHP,
+    elHP: elHP,
+    renderHP: renderHP,
 };
 
 function createElement(tag, className) {
@@ -37,36 +43,70 @@ function randomizer(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function changeHP(player) {
-    const $playerLife = document.querySelector(`.player${player.player} .life`);
-    const damage = randomizer(1, 20);
+function changeHP(damageInterval) {
+    const damage = randomizer(1, damageInterval);
 
-    player.hp -= damage;
+    this.hp -= damage;
 
-    if (player.hp <= 0) player.hp = 0;
+    if (this.hp <= 0) this.hp = 0;
 
-    $playerLife.style.width = `${player.hp}%`;
+    return this.hp;
+}
+
+function elHP() {
+    const $playerLife = document.querySelector(`.player${this.player} .life`);
+
+    return $playerLife;
+}
+
+function renderHP() {
+    const $playerLife = this.elHP();
+
+    $playerLife.style.width = `${this.hp}%`;
 }
 
 function winPlayer(name) {
     const $winPlayer = createElement('div', 'loseTitle');
-    $winPlayer.innerText = `${name} win!`;
 
-    $randomButton.disabled = true;
-
+    if (name) {
+        $winPlayer.innerText = `${name} win!`;
+    } else {
+        $winPlayer.innerText = `DRAW!`;
+    }
     return $winPlayer;
 }
 
 $randomButton.addEventListener('click', () => {
-    changeHP(player1);
-    changeHP(player2);
+    player1.changeHP(20);
+    player1.renderHP();
 
-    if (player1.hp === 0) {
+    player2.changeHP(20);
+    player2.renderHP();
+
+    if (player1.hp === 0 || player2.hp === 0) {
+        $randomButton.disabled = true;
+        createReloadButton();
+    }
+
+    if (player1.hp === 0 && player1.hp < player2.hp) {
         $arena.append(winPlayer(player2.name));
-    } else if (player2.hp === 0) {
+    } else if (player2.hp === 0 && player2.hp < player1.hp) {
         $arena.append(winPlayer(player1.name));
+    } else if (player1.hp === 0 && player2.hp === 0) {
+        $arena.append(winPlayer());
     }
 });
+
+function createReloadButton() {
+    const $reloadWrap = createElement('div', 'reloadWrap');
+    const $reloadButton = createElement('button', 'button');
+    $reloadButton.innerText = 'Restart';
+
+    $reloadWrap.append($reloadButton);
+    $arena.append($reloadWrap);
+
+    $reloadButton.addEventListener('click', () => window.location.reload());
+}
 
 function createPlayer(playerObj) {
     const $divPlayer = createElement('div', `player${playerObj.player}`);
