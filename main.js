@@ -25,6 +25,7 @@ const player1 = {
     changeHP,
     elHP,
     renderHP,
+    showDamage
 };
 
 const player2 = {
@@ -40,6 +41,7 @@ const player2 = {
     changeHP,
     elHP,
     renderHP,
+    showDamage
 };
 
 function createElement(tag, className) {
@@ -149,28 +151,23 @@ function ownAttack() {
     return attack;
 }
 
+function showDamage (damageValue) {
+    this.changeHP(damageValue);
+    this.renderHP();
+}
+
 function fightAction() {
     const enemy = enemyAttack();
     const attack = ownAttack();
 
-    if (enemy.hit === attack.defense) {
-        player1.renderHP();
+    if (enemy.hit !== attack.defense) {
+        player1.showDamage(enemy.value)
+    } 
 
-        player2.changeHP(attack.value);
-        player2.renderHP();
-    } else if (attack.hit === enemy.defense) {
-        player1.changeHP(enemy.value);
-        player1.renderHP();
-
-        player2.renderHP();
-    } else {
-        player1.changeHP(enemy.value);
-        player1.renderHP();
-
-        player2.changeHP(attack.value);
-        player2.renderHP();
-    }
-
+    if (attack.hit !== enemy.defense) {
+        player2.showDamage(attack.value)
+    } 
+        
     if (player1.hp === 0 || player2.hp === 0) {
         $fightButton.disabled = true;
         $fightButton.style.opacity = '0.6';
