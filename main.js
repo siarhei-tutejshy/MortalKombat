@@ -25,7 +25,7 @@ const player1 = {
     changeHP,
     elHP,
     renderHP,
-    showDamage
+    showDamage,
 };
 
 const player2 = {
@@ -41,7 +41,7 @@ const player2 = {
     changeHP,
     elHP,
     renderHP,
-    showDamage
+    showDamage,
 };
 
 function createElement(tag, className) {
@@ -151,23 +151,12 @@ function ownAttack() {
     return attack;
 }
 
-function showDamage (damageValue) {
+function showDamage(damageValue) {
     this.changeHP(damageValue);
     this.renderHP();
 }
 
-function fightAction() {
-    const enemy = enemyAttack();
-    const attack = ownAttack();
-
-    if (enemy.hit !== attack.defense) {
-        player1.showDamage(enemy.value)
-    } 
-
-    if (attack.hit !== enemy.defense) {
-        player2.showDamage(attack.value)
-    } 
-        
+function showResult() {
     if (player1.hp === 0 || player2.hp === 0) {
         $fightButton.disabled = true;
         $fightButton.style.opacity = '0.6';
@@ -181,6 +170,21 @@ function fightAction() {
     } else if (player1.hp === 0 && player2.hp === 0) {
         $arena.append(winPlayer());
     }
+}
+
+function fightAction() {
+    const enemy = enemyAttack();
+    const attack = ownAttack();
+
+    if (enemy.hit !== attack.defense) {
+        player1.showDamage(enemy.value);
+    }
+
+    if (attack.hit !== enemy.defense) {
+        player2.showDamage(attack.value);
+    }
+    
+    showResult();
 }
 
 $formFight.addEventListener('submit', (event) => {
