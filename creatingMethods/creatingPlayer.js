@@ -1,20 +1,20 @@
-import { createElement } from './utils.js';
+import { createElement } from '../utils/utils.js';
 
-const createPlayer = (playerObj) => {
-    const $divPlayer = createElement('div', `player${playerObj.player}`);
+const createPlayer = ({ player, hp, name, img }) => {
+    const $divPlayer = createElement('div', `player${player}`);
 
     const $divProgressbar = createElement('div', 'progressbar');
 
     const $divLife = createElement('div', 'life');
-    $divLife.style.width = `${playerObj.hp}%`;
+    $divLife.style.width = `${hp}%`;
 
     const $divName = createElement('div', 'name');
-    $divName.textContent = playerObj.name;
+    $divName.textContent = name;
 
     const $divCharacter = createElement('div', 'character');
 
     const $divImgCharacter = createElement('img');
-    $divImgCharacter.src = playerObj.img;
+    $divImgCharacter.src = img;
 
     $divProgressbar.append($divLife, $divName);
     $divCharacter.append($divImgCharacter);

@@ -1,4 +1,4 @@
-import { createElement } from "./utils.js";
+import { createElement } from '../utils/utils.js';
 
 const winPlayer = (name) => {
     const $winPlayer = createElement('div', 'loseTitle');
