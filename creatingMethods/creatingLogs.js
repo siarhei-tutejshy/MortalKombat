@@ -1,8 +1,8 @@
-import { logs } from './logsData.js';
-import { $chat } from './elements.js';
-import { randomizer } from './utils.js';
+import { logs } from '../data/logsData.js';
+import { randomizer } from '../utils/utils.js';
 
 let { start, end, hit, defence, draw } = logs;
+const $chat = document.querySelector('.chat');
 
 const generateLogs = (...rest) => {
     let [type, player1, player2, damage] = rest;
