@@ -4,6 +4,7 @@ import { generateLogs } from '../creatingMethods/creatingLogs.js';
 import { winPlayer } from '../creatingMethods/createWinTitle.js';
 import { HIT, ATTACK } from '../data/hitAttackData.js';
 import { randomizer, createElement } from '../utils/utils.js';
+import { playerImages } from '../data/imagesData.js';
 
 export class Game {
     constructor() {
@@ -19,6 +20,19 @@ export class Game {
         this.$fightButton = document.querySelector('.button');
         this.$formFight = document.querySelector('.control');
     }
+
+    setImagesProperty = () => {
+        const imagesForFirstPlayer = playerImages.find(
+            (item) => item.name === this.player1.name
+        );
+        const imagesForSecondPlayer = playerImages.find(
+            (item) => item.name === this.player2.name
+        );
+
+        this.player1.images = imagesForFirstPlayer;
+        this.player2.images = imagesForSecondPlayer;
+        console.log(imagesForFirstPlayer);
+    };
 
     async attack() {
         const attack = {};
@@ -45,8 +59,24 @@ export class Game {
 
     async fightAction() {
         const attacks = await this.attack();
+
         const enemy = attacks.player1;
         const attack = attacks.player2;
+
+        await console.log(this.player1.images.hit[attack.hit], attack.hit);
+
+        this.player1Block.children[1].children[0].src =
+            this.player1.images.hit[attack.hit];
+        this.player1Block.children[1].classList.add('move');
+        this.player2Block.children[1].children[0].src =
+            this.player2.images.defense;
+
+        this.timerId = setTimeout(() => {
+            this.player1Block.children[1].children[0].src = this.player1.img;
+            this.player1Block.children[1].classList.remove('move');
+            this.player2Block.children[1].children[0].src = this.player2.img;
+        }, 300);
+        console.dir(this.player1Block.children[1].children[0]);
 
         if (enemy.hit !== attack.defense) {
             this.player1.showDamage(enemy.value);
@@ -59,22 +89,34 @@ export class Game {
         } else generateLogs('defence', this.player1, this.player2);
     }
 
+    showWinner = () => {
+        if (this.player1.hp === 0 && this.player1.hp < this.player2.hp) {
+            this.$arena.append(winPlayer(this.player2.name));
+            generateLogs('end', this.player2, this.player1);
+            this.player1Block.children[1].children[0].src =
+                this.player1.images.lose;
+            this.player2Block.children[1].children[0].src =
+                this.player2.images.win;
+        } else if (this.player2.hp === 0 && this.player2.hp < this.player1.hp) {
+            this.$arena.append(winPlayer(this.player1.name));
+            generateLogs('end', this.player1, this.player2);
+            this.player2Block.children[1].children[0].src =
+                this.player2.images.lose;
+            this.player1Block.children[1].children[0].src =
+                this.player1.images.win;
+        } else if (this.player1.hp === 0 && this.player2.hp === 0) {
+            this.$arena.append(winPlayer());
+            generateLogs('draw');
+        }
+    };
+
     showResult = () => {
         if (this.player1.hp === 0 || this.player2.hp === 0) {
             this.$fightButton.disabled = true;
             this.$fightButton.style.opacity = '0.6';
             this.createReloadButton();
-        }
-
-        if (this.player1.hp === 0 && this.player1.hp < this.player2.hp) {
-            this.$arena.append(winPlayer(this.player2.name));
-            generateLogs('end', this.player2, this.player1);
-        } else if (this.player2.hp === 0 && this.player2.hp < this.player1.hp) {
-            this.$arena.append(winPlayer(this.player1.name));
-            generateLogs('end', this.player1, this.player2);
-        } else if (this.player1.hp === 0 && this.player2.hp === 0) {
-            this.$arena.append(winPlayer());
-            generateLogs('draw');
+            clearTimeout(this.timerId)
+            this.showWinner();
         }
     };
 
@@ -95,10 +137,14 @@ export class Game {
     start = () => {
         this.$arena.classList.add(`arena${randomizer(1, 5)}`);
 
-        this.$arena.append(
-            createPlayer(this.player1),
-            createPlayer(this.player2)
-        );
+        this.player1Block = createPlayer(this.player1);
+
+        console.log('between');
+        this.player2Block = createPlayer(this.player2);
+
+        this.setImagesProperty();
+
+        this.$arena.append(this.player1Block, this.player2Block);
 
         generateLogs('start', this.player1, this.player2);
 
