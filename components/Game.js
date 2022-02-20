@@ -31,7 +31,6 @@ export class Game {
 
         this.player1.images = imagesForFirstPlayer;
         this.player2.images = imagesForSecondPlayer;
-        console.log(imagesForFirstPlayer);
     };
 
     async attack() {
@@ -57,26 +56,51 @@ export class Game {
         return response;
     }
 
+    hitMoving(enemy, attack) {
+        
+        
+        let promise = new Promise((resolve) => {
+            this.player1Block.children[1].children[0].src = this.player1.images.hit[attack.hit];   
+            this.player1Block.children[1].classList.add('move');
+            this.player2Block.children[1].children[0].src = this.player2.images.defense;
+            resolve();
+        });
+
+        promise
+            .then((_) => {
+                return new Promise((resolve) => {
+                    this.timerId2 = setTimeout(() => {
+                        this.player1Block.children[1].classList.remove('move');
+                        resolve();
+                    }, 700);
+                });
+            })
+            .then((_) => {
+                this.player2Block.children[1].children[0].src = this.player2.images.hit[enemy.hit];
+                this.player2Block.children[1].classList.add('move2');
+                this.player1Block.children[1].children[0].src = this.player1.images.defense;
+            })
+            .then(() => {
+                this.timerId = setTimeout(() => {
+                    this.player2Block.children[1].children[0].src = this.player2.img;
+                    this.player2Block.children[1].classList.remove('move2');
+                    this.player1Block.children[1].children[0].src = this.player1.img;   
+                }, 400);
+            });
+        
+    }
+
     async fightAction() {
         const attacks = await this.attack();
 
         const enemy = attacks.player1;
         const attack = attacks.player2;
-
-        await console.log(this.player1.images.hit[attack.hit], attack.hit);
-
-        this.player1Block.children[1].children[0].src =
-            this.player1.images.hit[attack.hit];
-        this.player1Block.children[1].classList.add('move');
-        this.player2Block.children[1].children[0].src =
-            this.player2.images.defense;
-
-        this.timerId = setTimeout(() => {
-            this.player1Block.children[1].children[0].src = this.player1.img;
-            this.player1Block.children[1].classList.remove('move');
-            this.player2Block.children[1].children[0].src = this.player2.img;
-        }, 300);
-        console.dir(this.player1Block.children[1].children[0]);
+       
+        this.hitMoving(enemy, attack)
+            
+         
+    
+        
 
         if (enemy.hit !== attack.defense) {
             this.player1.showDamage(enemy.value);
@@ -87,6 +111,7 @@ export class Game {
             this.player2.showDamage(attack.value);
             generateLogs('hit', this.player1, this.player2, attack.value);
         } else generateLogs('defence', this.player1, this.player2);
+        
     }
 
     showWinner = () => {
@@ -112,10 +137,11 @@ export class Game {
 
     showResult = () => {
         if (this.player1.hp === 0 || this.player2.hp === 0) {
+            
+            
             this.$fightButton.disabled = true;
             this.$fightButton.style.opacity = '0.6';
             this.createReloadButton();
-            clearTimeout(this.timerId)
             this.showWinner();
         }
     };
