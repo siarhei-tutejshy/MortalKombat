@@ -412,6 +412,17 @@ input[type=radio]:checked + label > span:hover {
     animation: move 0.5s linear 
 
 }
+.move2{
+    animation: move2 0.5s linear  
+
+}
+
+@keyframes move2 {
+    0%   { transform: translatex(0); }
+    50%  { transform: translatex(-350px); }
+    100% { transform: translatex(0); 
+    }
+}
 
 @keyframes move {
     0%   { transform: translatex(0); }
