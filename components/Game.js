@@ -56,9 +56,7 @@ export class Game {
         return response;
     }
 
-    hitMoving(enemy, attack) {
-        
-        
+     hitMoving(enemy, attack) {
         let promise = new Promise((resolve) => {
             this.player1Block.children[1].children[0].src = this.player1.images.hit[attack.hit];   
             this.player1Block.children[1].classList.add('move');
@@ -86,8 +84,7 @@ export class Game {
                     this.player2Block.children[1].classList.remove('move2');
                     this.player1Block.children[1].children[0].src = this.player1.img;   
                 }, 400);
-            });
-        
+            })
     }
 
     async fightAction() {
@@ -96,12 +93,6 @@ export class Game {
         const enemy = attacks.player1;
         const attack = attacks.player2;
        
-        this.hitMoving(enemy, attack)
-            
-         
-    
-        
-
         if (enemy.hit !== attack.defense) {
             this.player1.showDamage(enemy.value);
             generateLogs('hit', this.player2, this.player1, enemy.value);
@@ -111,39 +102,37 @@ export class Game {
             this.player2.showDamage(attack.value);
             generateLogs('hit', this.player1, this.player2, attack.value);
         } else generateLogs('defence', this.player1, this.player2);
-        
+
+        (this.player1.hp === 0 || this.player2.hp === 0) 
+            ? this.showResult()
+            : this.hitMoving(enemy, attack)
     }
 
     showWinner = () => {
         if (this.player1.hp === 0 && this.player1.hp < this.player2.hp) {
             this.$arena.append(winPlayer(this.player2.name));
             generateLogs('end', this.player2, this.player1);
-            this.player1Block.children[1].children[0].src =
-                this.player1.images.lose;
-            this.player2Block.children[1].children[0].src =
-                this.player2.images.win;
+            this.player1Block.children[1].children[0].src = this.player1.images.lose; 
+            this.player2Block.children[1].children[0].src = this.player2.images.win;  
         } else if (this.player2.hp === 0 && this.player2.hp < this.player1.hp) {
             this.$arena.append(winPlayer(this.player1.name));
             generateLogs('end', this.player1, this.player2);
-            this.player2Block.children[1].children[0].src =
-                this.player2.images.lose;
-            this.player1Block.children[1].children[0].src =
-                this.player1.images.win;
+            this.player2Block.children[1].children[0].src = this.player2.images.lose;
+            this.player1Block.children[1].children[0].src = this.player1.images.win; 
         } else if (this.player1.hp === 0 && this.player2.hp === 0) {
             this.$arena.append(winPlayer());
             generateLogs('draw');
+            this.player1Block.children[1].children[0].src = this.player1.images.lose; 
+            this.player2Block.children[1].children[0].src = this.player2.images.lose;
         }
     };
 
-    showResult = () => {
-        if (this.player1.hp === 0 || this.player2.hp === 0) {
-            
-            
+    showResult = () => { 
             this.$fightButton.disabled = true;
             this.$fightButton.style.opacity = '0.6';
             this.createReloadButton();
             this.showWinner();
-        }
+        
     };
 
     createReloadButton = () => {
@@ -176,7 +165,7 @@ export class Game {
 
         this.$formFight.addEventListener('submit', (event) => {
             event.preventDefault();
-            this.fightAction().then(() => this.showResult());
+            this.fightAction();
         });
     };
 }
